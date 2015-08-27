@@ -87,32 +87,41 @@ public class ModbusMasterResponseDecoder extends ByteToMessageDecoder {
         }
         in.readerIndex(in.readerIndex() + 4);
         int unitId = in.readUnsignedByte();
-        int functionCode = in.readUnsignedByte();
-        if ((functionCode & 0x80) != 0) {
-            // decode modbus exception
+        if (unitId != request.getUnitId()) {
+            throw new DecoderException();
         }
-        if (functionCode != request.getFunction().getCode() || unitId != request.getUnitId()) {
+        int functionCode = in.readUnsignedByte();
+        if ((functionCode & 0x7F) != request.getFunction().getCode()) {
             throw new DecoderException();
         }
 
         ModbusResponse response;
-        switch (functionCode) {
-        case 0x01:
-        case 0x02:
-            response = new ReadBooleanRegistersResponse();
-            break;
-        case 0x03:
-        case 0x04:
-            response = new ReadWordRegistersResponse();
-            break;
-        default:
-            throw new UnsupportedFunctionCodeException();
+
+        if ((functionCode & 0x80) == 0) {
+            switch (functionCode) {
+            case 0x01:
+            case 0x02:
+                response = new ReadBooleanRegistersResponse();
+                break;
+            case 0x03:
+            case 0x04:
+                response = new ReadWordRegistersResponse();
+                break;
+            default:
+                throw new UnsupportedFunctionCodeException();
+            }
+            request.getFunction().decodeResponseData(in, response);
+        } else {
+            ExceptionResponse exResponse = new ExceptionResponse();
+            exResponse.setExceptionCode(in.readUnsignedByte());
+            response = exResponse;
         }
         response.setFunctionCode(functionCode);
         response.setTransectionId(transectionId);
         response.setUnitId(unitId);
-        request.getFunction().decodeResponseData(in, response);
+
         out.add(response);
+
         if (withCheckSum) {
             in.readerIndex(in.readerIndex() + 2);
         }
