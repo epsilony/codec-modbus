@@ -40,6 +40,8 @@ import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 import net.epsilony.utils.codec.modbus.reqres.ReadBooleanRegistersResponse;
 import net.epsilony.utils.codec.modbus.reqres.ReadWordRegistersResponse;
+import net.epsilony.utils.codec.modbus.reqres.WriteCoilResponse;
+import net.epsilony.utils.codec.modbus.reqres.WriteHoldingResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
@@ -131,6 +133,12 @@ public class ModbusMasterResponseDecoder extends ByteToMessageDecoder {
                 rResponse.setRegisterType(ModbusRegisterType.INPUT);
                 response = rResponse;
             }
+                break;
+            case 0x05:
+                response = new WriteCoilResponse();
+                break;
+            case 0x06:
+                response = new WriteHoldingResponse();
                 break;
             default:
                 throw new UnsupportedFunctionCodeException();

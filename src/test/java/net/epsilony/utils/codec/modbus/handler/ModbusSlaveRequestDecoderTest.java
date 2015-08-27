@@ -35,6 +35,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.epsilony.utils.codec.modbus.ModbusRegisterType;
+import net.epsilony.utils.codec.modbus.Utils;
 import net.epsilony.utils.codec.modbus.func.MF;
 import net.epsilony.utils.codec.modbus.func.ModbusFunction;
 import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
@@ -64,6 +65,12 @@ public class ModbusSlaveRequestDecoderTest {
             }
         }
 
+        public void writeBufferWithCrc(ByteBuf buf) {
+            int from = buf.writerIndex();
+            writeBuffer(buf);
+            buf.writeShort(Utils.crc(buf, from, buf.writerIndex() - from));
+        }
+
         public ModbusRequest createRequest() {
             ModbusRequest request = new ModbusRequest();
             request.setTransectionId(transectionId);
@@ -87,15 +94,7 @@ public class ModbusSlaveRequestDecoderTest {
 
         EmbeddedChannel channel = new EmbeddedChannel(new ModbusSlaveRequestDecoder());
 
-        TestData[] datas = new TestData[] {
-                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x01, 0xfe, 0xed, 0x03, 0xff },
-                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.COIL, 0xFEED, 0x03ff)),
-                new TestData(new int[] { 0xFB, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x02, 0xfe, 0xed, 0x03, 0xff },
-                        0xFBCE, 0x83, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEED, 0x03ff)),
-                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x03, 0xfe, 0xed, 0x00, 0x7C },
-                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.HOLDING, 0xFEED, 0x007C)),
-                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x04, 0xfe, 0xed, 0x00, 0x7C },
-                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.INPUT, 0xFEED, 0x007C)), };
+        TestData[] datas = createTestData();
         for (TestData data : datas) {
             ByteBuf buf = createBuf();
             data.writeBuffer(buf);
@@ -123,6 +122,61 @@ public class ModbusSlaveRequestDecoderTest {
         }
         assertTrue(totalBuf.refCnt() <= 0);
         assertEquals(null, channel.readInbound());
+    }
+
+    @Test
+    public void testDecodeWithCrc() {
+
+        ModbusSlaveRequestDecoder decoder = new ModbusSlaveRequestDecoder();
+        decoder.setWithCheckSum(true);
+        EmbeddedChannel channel = new EmbeddedChannel(decoder);
+
+        TestData[] datas = createTestData();
+        for (TestData data : datas) {
+            ByteBuf buf = createBuf();
+            data.writeBufferWithCrc(buf);
+            channel.writeInbound(buf);
+            Object decoded = channel.readInbound();
+
+            assertTrue(buf.refCnt() <= 0);
+            ModbusRequest exp = data.createRequest();
+            assertEquals(exp, decoded);
+        }
+
+        assertEquals(null, channel.readInbound());
+
+        ByteBuf totalBuf = createBuf();
+        for (TestData data : datas) {
+            data.writeBufferWithCrc(totalBuf);
+        }
+
+        channel.writeInbound(totalBuf);
+        for (TestData data : datas) {
+            Object decoded = channel.readInbound();
+
+            ModbusRequest exp = data.createRequest();
+            assertEquals(exp, decoded);
+        }
+        assertTrue(totalBuf.refCnt() <= 0);
+        assertEquals(null, channel.readInbound());
+    }
+
+    private TestData[] createTestData() {
+        return new TestData[] {
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x01, 0xfe, 0xed, 0x03, 0xff },
+                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.COIL, 0xFEED, 0x03ff)),
+                new TestData(new int[] { 0xFB, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x02, 0xfe, 0xed, 0x03, 0xff },
+                        0xFBCE, 0x83, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEED, 0x03ff)),
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x03, 0xfe, 0xed, 0x00, 0x7C },
+                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.HOLDING, 0xFEED, 0x007C)),
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x04, 0xfe, 0xed, 0x00, 0x7C },
+                        0xFACE, 0x83, MF.readRegisters(ModbusRegisterType.INPUT, 0xFEED, 0x007C)),
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x05, 0xfe, 0xed, 0xFF, 0x00 },
+                        0xFACE, 0x83, MF.writeRegister(0xFEED, true)),
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x05, 0xfe, 0xed, 0x00, 0x00 },
+                        0xFACE, 0x83, MF.writeRegister(0xFEED, false)),
+                new TestData(new int[] { 0xFA, 0xCE, 0x00, 0x00, 0x00, 0x06, 0x83, 0x06, 0xfe, 0xed, 0xAB, 0xCD },
+                        0xFACE, 0x83, MF.writeRegister(0xFEED, 0xABCD)), };
     }
 
 }

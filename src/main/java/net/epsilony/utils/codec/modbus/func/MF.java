@@ -51,4 +51,18 @@ public class MF {
         function.setQuantity(quantity);
         return function;
     }
+
+    public static ModbusFunction writeRegister(int address, int unsignedShortValue) {
+        WriteHoldingFunction result = new WriteHoldingFunction();
+        result.setAddress(address);
+        result.setValue(unsignedShortValue);
+        return result;
+    }
+
+    public static ModbusFunction writeRegister(int address, boolean booleanValue) {
+        WriteCoilFunction result = new WriteCoilFunction();
+        result.setAddress(address);
+        result.setValue(booleanValue);
+        return result;
+    }
 }

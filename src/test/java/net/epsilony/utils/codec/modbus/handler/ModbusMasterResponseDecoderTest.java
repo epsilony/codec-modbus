@@ -37,6 +37,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.epsilony.utils.codec.modbus.ModbusRegisterType;
+import net.epsilony.utils.codec.modbus.Utils;
 import net.epsilony.utils.codec.modbus.func.MF;
 import net.epsilony.utils.codec.modbus.reqres.ExceptionResponse;
 import net.epsilony.utils.codec.modbus.reqres.MissMatchResponse;
@@ -44,6 +45,8 @@ import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 import net.epsilony.utils.codec.modbus.reqres.ReadBooleanRegistersResponse;
 import net.epsilony.utils.codec.modbus.reqres.ReadWordRegistersResponse;
+import net.epsilony.utils.codec.modbus.reqres.WriteCoilResponse;
+import net.epsilony.utils.codec.modbus.reqres.WriteHoldingResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
@@ -80,10 +83,16 @@ public class ModbusMasterResponseDecoderTest {
             }
         }
 
+        public void writeBufferWithCrc(ByteBuf buf) {
+            int from = buf.writerIndex();
+            writeBuffer(buf);
+            buf.writeShort(Utils.crc(buf, from, buf.writerIndex() - from));
+        }
+
     }
 
     public static ByteBuf createBuf() {
-        ByteBuf buf = Unpooled.buffer();
+        ByteBuf buf = Unpooled.buffer(1024);
         int randShift = new Random().nextInt(10) + 7;
         buf.writerIndex(randShift);
         buf.readerIndex(randShift);
@@ -93,7 +102,60 @@ public class ModbusMasterResponseDecoderTest {
     @Test
     public void testDecoding() {
         EmbeddedChannel channel = new EmbeddedChannel(new ModbusMasterResponseDecoder(requests::remove));
-        TestData[] datas = new TestData[] {
+        TestData[] datas = initTestData();
+
+        ByteBuf buf = createBuf();
+
+        for (TestData data : datas) {
+            data.writeBuffer(buf);
+        }
+
+        channel.writeInbound(buf);
+
+        for (TestData data : datas) {
+            Object decoded = channel.readInbound();
+            assertEquals(data.response, decoded);
+        }
+        assertEquals(null, channel.readInbound());
+        assertTrue(buf.refCnt() <= 0);
+        assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void testDecodingWithCheckSome() {
+        ModbusMasterResponseDecoder decoder = new ModbusMasterResponseDecoder(requests::remove);
+        decoder.setWithCheckSum(true);
+        EmbeddedChannel channel = new EmbeddedChannel(decoder);
+        TestData[] datas = initTestData();
+
+        ByteBuf buf = createBuf();
+
+        for (TestData data : datas) {
+            data.writeBufferWithCrc(buf);
+        }
+
+        channel.writeInbound(buf);
+
+        for (TestData data : datas) {
+            Object decoded = channel.readInbound();
+            assertEquals(data.response, decoded);
+        }
+        assertEquals(null, channel.readInbound());
+        assertTrue(buf.refCnt() <= 0);
+        assertTrue(requests.isEmpty());
+    }
+
+    private TestData[] initTestData() {
+        return new TestData[] {
+                new TestData(new ModbusRequest(0xAC01, 0xFB, MF.writeRegister(0xFEDC, 0xDAFE)),
+                        new WriteHoldingResponse(0xAC01, 0xFB, 0xFEDC, 0xDAFE),
+                        new int[] { 0xAC, 0x01, 0x00, 0x00, 0x00, 0x06, 0xFB, 0x06, 0xFE, 0xDC, 0xDA, 0xFE }),
+                new TestData(new ModbusRequest(0xAC02, 0xFB, MF.writeRegister(0xFEDC, false)),
+                        new WriteCoilResponse(0xAC02, 0xFB, 0xFEDC, false),
+                        new int[] { 0xAC, 0x02, 0x00, 0x00, 0x00, 0x06, 0xFB, 0x05, 0xFE, 0xDC, 0x00, 0x00 }),
+                new TestData(new ModbusRequest(0xAC03, 0xFB, MF.writeRegister(0xFEDC, true)),
+                        new WriteCoilResponse(0xAC03, 0xFB, 0xFEDC, true),
+                        new int[] { 0xAC, 0x03, 0x00, 0x00, 0x00, 0x06, 0xFB, 0x05, 0xFE, 0xDC, 0xff, 0x00 }),
                 new TestData(new ModbusRequest(0xAB01, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT, 0xFEDC, 3)),
                         new ReadWordRegistersResponse(0xAB01, 0xFB, ModbusRegisterType.INPUT, 0xFEDC,
                                 new int[] { 0xFF01, 0xFF02, 0xFF03 }),
@@ -166,22 +228,6 @@ public class ModbusMasterResponseDecoderTest {
                         new ModbusRequest(0xAB0a, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
                         new ExceptionResponse(0xAB0a, 0xFB, 0x82, 0x01),
                         new int[] { 0xAB, 0x0a, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }), };
-
-        ByteBuf buf = createBuf();
-
-        for (TestData data : datas) {
-            data.writeBuffer(buf);
-        }
-
-        channel.writeInbound(buf);
-
-        for (TestData data : datas) {
-            Object decoded = channel.readInbound();
-            assertEquals(data.response, decoded);
-        }
-        assertEquals(null, channel.readInbound());
-        assertTrue(buf.refCnt() <= 0);
-        assertTrue(requests.isEmpty());
     }
 
 }

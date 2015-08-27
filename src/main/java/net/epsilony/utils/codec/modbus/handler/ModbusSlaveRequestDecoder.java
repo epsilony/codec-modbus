@@ -36,6 +36,8 @@ import net.epsilony.utils.codec.modbus.Utils;
 import net.epsilony.utils.codec.modbus.func.ModbusFunction;
 import net.epsilony.utils.codec.modbus.func.ReadBooleanRegistersFunction;
 import net.epsilony.utils.codec.modbus.func.ReadWordRegistersFunction;
+import net.epsilony.utils.codec.modbus.func.WriteCoilFunction;
+import net.epsilony.utils.codec.modbus.func.WriteHoldingFunction;
 import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 
 /**
@@ -64,6 +66,9 @@ public class ModbusSlaveRequestDecoder extends ByteToMessageDecoder {
             return;
         }
 
+        if (withCheckSum) {
+            checkSum(in, wholeLength);
+        }
         int transectionId = in.readUnsignedShort();
         in.readerIndex(in.readerIndex() + 4);
         int unitId = in.readUnsignedByte();
@@ -82,11 +87,14 @@ public class ModbusSlaveRequestDecoder extends ByteToMessageDecoder {
         case 0x04:
             function = new ReadWordRegistersFunction(ModbusRegisterType.INPUT);
             break;
+        case 0x05:
+            function = new WriteCoilFunction();
+            break;
+        case 0x06:
+            function = new WriteHoldingFunction();
+            break;
         default:
             throw new UnsupportedFunctionCodeException();
-        }
-        if (withCheckSum) {
-            checkSum(in, wholeLength);
         }
         try {
             function.decodeRequestData(in);
