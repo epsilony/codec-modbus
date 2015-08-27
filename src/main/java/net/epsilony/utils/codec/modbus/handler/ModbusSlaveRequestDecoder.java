@@ -34,7 +34,7 @@ import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 import net.epsilony.utils.codec.modbus.UnsupportedFunctionCodeException;
 import net.epsilony.utils.codec.modbus.Utils;
 import net.epsilony.utils.codec.modbus.func.ModbusFunction;
-import net.epsilony.utils.codec.modbus.func.ReadBooleanRegisterFunction;
+import net.epsilony.utils.codec.modbus.func.ReadBooleanRegistersFunction;
 import net.epsilony.utils.codec.modbus.func.ReadWordRegistersFunction;
 import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 
@@ -71,10 +71,10 @@ public class ModbusSlaveRequestDecoder extends ByteToMessageDecoder {
         ModbusFunction function;
         switch (functionCode) {
         case 0x01:
-            function = new ReadBooleanRegisterFunction(ModbusRegisterType.COIL);
+            function = new ReadBooleanRegistersFunction(ModbusRegisterType.COIL);
             break;
         case 0x02:
-            function = new ReadBooleanRegisterFunction(ModbusRegisterType.INPUT_DISCRETE);
+            function = new ReadBooleanRegistersFunction(ModbusRegisterType.INPUT_DISCRETE);
             break;
         case 0x03:
             function = new ReadWordRegistersFunction(ModbusRegisterType.HOLDING);

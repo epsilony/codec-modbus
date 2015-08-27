@@ -25,6 +25,7 @@
 package net.epsilony.utils.codec.modbus.reqres;
 
 import io.netty.buffer.ByteBuf;
+import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
@@ -48,6 +49,21 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
     }
 
     public abstract void setQuantityAndAllocate(int quantity);
+
+    public ModbusRegisterType getRegisterType() {
+        switch (getFunctionCode()) {
+        case 0x01:
+            return ModbusRegisterType.COIL;
+        case 0x02:
+            return ModbusRegisterType.INPUT_DISCRETE;
+        case 0x03:
+            return ModbusRegisterType.HOLDING;
+        case 0x04:
+            return ModbusRegisterType.INPUT;
+        default:
+            throw new IllegalStateException();
+        }
+    }
 
     @Override
     public void encode(ByteBuf out) {

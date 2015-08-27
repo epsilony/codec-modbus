@@ -42,6 +42,7 @@ public class ReadWordRegistersResponse extends ReadRegistersResponse {
             values.clear();
             values.ensureCapacity(quantity);
         }
+        this.quantity = quantity;
         values.fill(0, quantity, (short) 0);
     }
 

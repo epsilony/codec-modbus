@@ -35,22 +35,22 @@ import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 public abstract class ReadRegistersFunction implements ModbusFunction {
 
     protected ModbusRegisterType registerType;
-    protected int startAddress;
+    protected int startingAddress;
     protected int quantity;
 
     public ModbusRegisterType getRegisterType() {
         return registerType;
     }
 
-    public int getStartAddress() {
-        return startAddress;
+    public int getStartingAddress() {
+        return startingAddress;
     }
 
-    public void setStartAddress(int startAddress) {
+    public void setStartingAddress(int startAddress) {
         if (startAddress < 0 || startAddress > 0xffff) {
             throw new IllegalArgumentException();
         }
-        this.startAddress = startAddress;
+        this.startingAddress = startAddress;
     }
 
     public int getQuantity() {
@@ -108,13 +108,13 @@ public abstract class ReadRegistersFunction implements ModbusFunction {
         if (data.readableBytes() < 4) {
             throw new DecoderException();
         }
-        startAddress = data.readUnsignedShort();
+        startingAddress = data.readUnsignedShort();
         setQuantity(data.readUnsignedShort());
     }
 
     @Override
     public void encodeRequestData(ByteBuf data) {
-        data.writeShort(startAddress);
+        data.writeShort(startingAddress);
         data.writeShort(quantity);
     }
 

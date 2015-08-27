@@ -34,13 +34,13 @@ import net.epsilony.utils.codec.modbus.reqres.ReadBooleanRegistersResponse;
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ReadBooleanRegisterFunction extends ReadRegistersFunction {
+public class ReadBooleanRegistersFunction extends ReadRegistersFunction {
 
-    public ReadBooleanRegisterFunction() {
+    public ReadBooleanRegistersFunction() {
 
     }
 
-    public ReadBooleanRegisterFunction(ModbusRegisterType registerType) {
+    public ReadBooleanRegistersFunction(ModbusRegisterType registerType) {
         setRegisterType(registerType);
     }
 
