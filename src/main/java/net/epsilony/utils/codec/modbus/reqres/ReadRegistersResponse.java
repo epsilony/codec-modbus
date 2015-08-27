@@ -32,6 +32,7 @@ import net.epsilony.utils.codec.modbus.ModbusRegisterType;
  */
 public abstract class ReadRegistersResponse extends ModbusResponse {
 
+    protected ModbusRegisterType registerType;
     protected int startingAddress;
     protected int quantity;
 
@@ -39,14 +40,9 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
 
     }
 
-    public ReadRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress, int quantity) {
-        super(transectionId, unitId, functionCode);
-        this.startingAddress = startingAddress;
-        setQuantityAndAllocate(quantity);
-    }
-
-    public ReadRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress) {
-        super(transectionId, unitId, functionCode);
+    public ReadRegistersResponse(int transectionId, int unitId, ModbusRegisterType registerType, int startingAddress) {
+        super(transectionId, unitId);
+        this.registerType = registerType;
         this.startingAddress = startingAddress;
     }
 
@@ -65,15 +61,27 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
     public abstract void setQuantityAndAllocate(int quantity);
 
     public ModbusRegisterType getRegisterType() {
-        switch (getFunctionCode()) {
-        case 0x01:
-            return ModbusRegisterType.COIL;
-        case 0x02:
-            return ModbusRegisterType.INPUT_DISCRETE;
-        case 0x03:
-            return ModbusRegisterType.HOLDING;
-        case 0x04:
-            return ModbusRegisterType.INPUT;
+        return registerType;
+    }
+
+    public void setRegisterType(ModbusRegisterType registerType) {
+        checkRegisterType(registerType);
+        this.registerType = registerType;
+    }
+
+    protected abstract void checkRegisterType(ModbusRegisterType registerType);
+
+    @Override
+    public int getFunctionCode() {
+        switch (registerType) {
+        case COIL:
+            return 0x01;
+        case HOLDING:
+            return 0x03;
+        case INPUT:
+            return 0x04;
+        case INPUT_DISCRETE:
+            return 0x02;
         default:
             throw new IllegalStateException();
         }
@@ -100,6 +108,8 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
         if (quantity != other.quantity)
             return false;
         if (startingAddress != other.startingAddress)
+            return false;
+        if (getRegisterType() != other.getRegisterType())
             return false;
         return true;
     }

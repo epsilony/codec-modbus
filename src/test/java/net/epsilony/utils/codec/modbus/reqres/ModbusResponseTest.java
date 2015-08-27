@@ -41,6 +41,17 @@ public class ModbusResponseTest {
 
     static class MockResponse extends ModbusResponse {
 
+        int functionCode;
+
+        @Override
+        public int getFunctionCode() {
+            return functionCode;
+        }
+
+        public void setFunctionCode(int functionCode) {
+            this.functionCode = functionCode;
+        }
+
         @Override
         public void writePduCore(ByteBuf out) {
             out.writeByte(0xAB);
@@ -71,7 +82,7 @@ public class ModbusResponseTest {
         }
 
         ModbusResponse createResponse() {
-            ModbusResponse response = new MockResponse();
+            MockResponse response = new MockResponse();
             response.setTransectionId(transectionId);
             response.setFunctionCode(functionCode);
             response.setUnitId(unitId);

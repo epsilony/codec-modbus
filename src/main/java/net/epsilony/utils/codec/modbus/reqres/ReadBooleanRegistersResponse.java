@@ -26,6 +26,7 @@ package net.epsilony.utils.codec.modbus.reqres;
 
 import gnu.trove.list.array.TByteArrayList;
 import io.netty.buffer.ByteBuf;
+import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
@@ -38,9 +39,9 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     public ReadBooleanRegistersResponse() {
     }
 
-    public ReadBooleanRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress,
-            boolean[] values) {
-        super(transectionId, unitId, functionCode, startingAddress);
+    public ReadBooleanRegistersResponse(int transectionId, int unitId, ModbusRegisterType registerType,
+            int startingAddress, boolean[] values) {
+        super(transectionId, unitId, registerType, startingAddress);
         this.values = new TByteArrayList(values.length);
         quantity = values.length;
         for (boolean v : values) {
@@ -118,6 +119,14 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
         } else if (!values.equals(other.values))
             return false;
         return true;
+    }
+
+    @Override
+    protected void checkRegisterType(ModbusRegisterType registerType) {
+        if (registerType != ModbusRegisterType.COIL && registerType != ModbusRegisterType.INPUT_DISCRETE) {
+            throw new IllegalArgumentException();
+        }
+
     }
 
 }

@@ -95,7 +95,8 @@ public class ModbusMasterResponseDecoderTest {
         EmbeddedChannel channel = new EmbeddedChannel(new ModbusMasterResponseDecoder(requests::remove));
         TestData[] datas = new TestData[] {
                 new TestData(new ModbusRequest(0xAB01, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT, 0xFEDC, 3)),
-                        new ReadWordRegistersResponse(0xAB01, 0xFB, 0x04, 0xFEDC, new int[] { 0xFF01, 0xFF02, 0xFF03 }),
+                        new ReadWordRegistersResponse(0xAB01, 0xFB, ModbusRegisterType.INPUT, 0xFEDC,
+                                new int[] { 0xFF01, 0xFF02, 0xFF03 }),
                         new int[] {
                                 0xAB,
                                 0x01,
@@ -113,7 +114,8 @@ public class ModbusMasterResponseDecoderTest {
                                 0xff,
                                 0x03 }),
                 new TestData(new ModbusRequest(0xAB02, 0xFB, MF.readRegisters(ModbusRegisterType.HOLDING, 0xFEDC, 3)),
-                        new ReadWordRegistersResponse(0xAB02, 0xFB, 0x03, 0xFEDC, new int[] { 0xFF01, 0xFF02, 0xFF03 }),
+                        new ReadWordRegistersResponse(0xAB02, 0xFB, ModbusRegisterType.HOLDING, 0xFEDC,
+                                new int[] { 0xFF01, 0xFF02, 0xFF03 }),
                         new int[] {
                                 0xAB,
                                 0x02,
@@ -132,7 +134,7 @@ public class ModbusMasterResponseDecoderTest {
                                 0x03 }),
                 new TestData(
                         new ModbusRequest(0xAB04, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB04, 0xFB, 0x02, 0xFEDC,
+                        new ReadBooleanRegistersResponse(0xAB04, 0xFB, ModbusRegisterType.INPUT_DISCRETE, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x04, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x02, 0x01, 0x05 }),
                 new TestData(
@@ -140,7 +142,7 @@ public class ModbusMasterResponseDecoderTest {
                         new ExceptionResponse(0xAB05, 0xFB, 0x82, 0x01),
                         new int[] { 0xAB, 0x05, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }),
                 new TestData(new ModbusRequest(0xAB03, 0xFB, MF.readRegisters(ModbusRegisterType.COIL, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB03, 0xFB, 0x01, 0xFEDC,
+                        new ReadBooleanRegistersResponse(0xAB03, 0xFB, ModbusRegisterType.COIL, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x03, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x01, 0x01, 0x05 }),
                 new TestData(
@@ -148,12 +150,12 @@ public class ModbusMasterResponseDecoderTest {
                         new MissMatchResponse(0xAB06),
                         new int[] { 0xAB, 0x06, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }, false),
                 new TestData(new ModbusRequest(0xAB07, 0xFB, MF.readRegisters(ModbusRegisterType.COIL, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB07, 0xFB, 0x01, 0xFEDC,
+                        new ReadBooleanRegistersResponse(0xAB07, 0xFB, ModbusRegisterType.COIL, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x07, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x01, 0x01, 0x05 }),
                 new TestData(
                         new ModbusRequest(0xAB08, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB08, 0xFB, 0x02, 0xFEDC,
+                        new ReadBooleanRegistersResponse(0xAB08, 0xFB, ModbusRegisterType.INPUT_DISCRETE, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x08, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x02, 0x01, 0x05 }),
                 new TestData(

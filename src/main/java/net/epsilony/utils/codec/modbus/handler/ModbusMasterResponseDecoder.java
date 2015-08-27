@@ -31,6 +31,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
+import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 import net.epsilony.utils.codec.modbus.UnsupportedFunctionCodeException;
 import net.epsilony.utils.codec.modbus.Utils;
 import net.epsilony.utils.codec.modbus.reqres.ExceptionResponse;
@@ -107,13 +108,29 @@ public class ModbusMasterResponseDecoder extends ByteToMessageDecoder {
 
         if ((functionCode & 0x80) == 0) {
             switch (functionCode) {
-            case 0x01:
-            case 0x02:
-                response = new ReadBooleanRegistersResponse();
+            case 0x01: {
+                ReadBooleanRegistersResponse bResponse = new ReadBooleanRegistersResponse();
+                bResponse.setRegisterType(ModbusRegisterType.COIL);
+                response = bResponse;
+            }
                 break;
-            case 0x03:
-            case 0x04:
-                response = new ReadWordRegistersResponse();
+            case 0x02: {
+                ReadBooleanRegistersResponse bResponse = new ReadBooleanRegistersResponse();
+                bResponse.setRegisterType(ModbusRegisterType.INPUT_DISCRETE);
+                response = bResponse;
+            }
+                break;
+            case 0x03: {
+                ReadWordRegistersResponse rResponse = new ReadWordRegistersResponse();
+                rResponse.setRegisterType(ModbusRegisterType.HOLDING);
+                response = rResponse;
+                break;
+            }
+            case 0x04: {
+                ReadWordRegistersResponse rResponse = new ReadWordRegistersResponse();
+                rResponse.setRegisterType(ModbusRegisterType.INPUT);
+                response = rResponse;
+            }
                 break;
             default:
                 throw new UnsupportedFunctionCodeException();
@@ -121,10 +138,10 @@ public class ModbusMasterResponseDecoder extends ByteToMessageDecoder {
             request.getFunction().decodeResponseData(in, response);
         } else {
             ExceptionResponse exResponse = new ExceptionResponse();
+            exResponse.setFunctionCode(functionCode);
             exResponse.setExceptionCode(in.readUnsignedByte());
             response = exResponse;
         }
-        response.setFunctionCode(functionCode);
         response.setTransectionId(transectionId);
         response.setUnitId(unitId);
 

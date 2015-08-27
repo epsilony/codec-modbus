@@ -31,15 +31,29 @@ import io.netty.buffer.ByteBuf;
  *
  */
 public class ExceptionResponse extends ModbusResponse {
+    private int functionCode;
     private int exceptionCode;
 
     public ExceptionResponse(int transectionId, int unitId, int functionCode, int exceptionCode) {
-        super(transectionId, unitId, functionCode);
+        super(transectionId, unitId);
+        setFunctionCode(functionCode);
         this.exceptionCode = exceptionCode;
     }
 
     public ExceptionResponse() {
 
+    }
+
+    @Override
+    public int getFunctionCode() {
+        return functionCode;
+    }
+
+    public void setFunctionCode(int functionCode) {
+        if ((functionCode & 0x80) == 0) {
+            throw new IllegalArgumentException();
+        }
+        this.functionCode = functionCode;
     }
 
     public int getExceptionCode() {

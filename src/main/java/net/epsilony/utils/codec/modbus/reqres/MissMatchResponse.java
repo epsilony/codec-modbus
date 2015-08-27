@@ -39,11 +39,6 @@ public class MissMatchResponse extends ModbusResponse {
         setTransectionId(transectionId);
     }
 
-    // public MissMatchResponse(int transectionId, int unitId, int functionCode)
-    // {
-    // super(transectionId, unitId, functionCode);
-    // }
-
     @Override
     public void writePduCore(ByteBuf out) {
         throw new UnsupportedOperationException();
@@ -52,6 +47,11 @@ public class MissMatchResponse extends ModbusResponse {
     @Override
     public int getPduCoreLength() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getFunctionCode() {
+        return 0x80;
     }
 
 }

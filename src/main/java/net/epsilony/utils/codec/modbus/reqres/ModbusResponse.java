@@ -33,12 +33,10 @@ import io.netty.buffer.ByteBuf;
 public abstract class ModbusResponse {
     protected int transectionId;
     protected int unitId;
-    protected int functionCode;
 
-    public ModbusResponse(int transectionId, int unitId, int functionCode) {
+    public ModbusResponse(int transectionId, int unitId) {
         this.transectionId = transectionId;
         this.unitId = unitId;
-        this.functionCode = functionCode;
     }
 
     public ModbusResponse() {
@@ -60,20 +58,14 @@ public abstract class ModbusResponse {
         this.unitId = unitId;
     }
 
-    public int getFunctionCode() {
-        return functionCode;
-    }
-
-    public void setFunctionCode(int functionCode) {
-        this.functionCode = functionCode;
-    }
+    public abstract int getFunctionCode();
 
     public void encode(ByteBuf out) {
         out.writeShort(transectionId);
         out.writeShort(0);
         out.writeShort(getPduCoreLength() + 2);
         out.writeByte(unitId);
-        out.writeByte(functionCode);
+        out.writeByte(getFunctionCode());
         writePduCore(out);
     }
 
@@ -85,7 +77,7 @@ public abstract class ModbusResponse {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + functionCode;
+        result = prime * result + getFunctionCode();
         result = prime * result + transectionId;
         result = prime * result + unitId;
         return result;
@@ -100,7 +92,7 @@ public abstract class ModbusResponse {
         if (getClass() != obj.getClass())
             return false;
         ModbusResponse other = (ModbusResponse) obj;
-        if (functionCode != other.functionCode)
+        if (getFunctionCode() != other.getFunctionCode())
             return false;
         if (transectionId != other.transectionId)
             return false;
