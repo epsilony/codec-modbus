@@ -56,7 +56,7 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    protected void writePduData(ByteBuf out) {
+    public void writePduData(ByteBuf out) {
         int mask = 1;
         int dataByte = 0;
         for (int i = 0; i < quantity; i++) {
@@ -77,7 +77,7 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    protected int getReadDataLength() {
+    public int getPduDataLength() {
         return 3 + (7 + quantity) / 8;
     }
 

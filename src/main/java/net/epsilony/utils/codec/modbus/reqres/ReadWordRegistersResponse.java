@@ -55,7 +55,7 @@ public class ReadWordRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    protected void writePduData(ByteBuf out) {
+    public void writePduData(ByteBuf out) {
         out.writeByte(2 * quantity);
         for (int i = 0; i < quantity; i++) {
             out.writeShort(getValue(i));
@@ -63,7 +63,7 @@ public class ReadWordRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    protected int getReadDataLength() {
+    public int getPduDataLength() {
         return 2 * quantity;
     }
 

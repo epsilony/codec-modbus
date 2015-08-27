@@ -42,8 +42,13 @@ public class ExceptionResponse extends ModbusResponse {
     }
 
     @Override
-    public void encode(ByteBuf out) {
+    public void writePduData(ByteBuf out) {
         out.writeByte(exceptionCode);
+    }
+
+    @Override
+    public int getPduDataLength() {
+        return 1;
     }
 
 }

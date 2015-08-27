@@ -24,7 +24,6 @@
  */
 package net.epsilony.utils.codec.modbus.reqres;
 
-import io.netty.buffer.ByteBuf;
 import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 
 /**
@@ -65,17 +64,4 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
         }
     }
 
-    @Override
-    public void encode(ByteBuf out) {
-        out.writeShort(transectionId);
-        out.writeShort(0);
-        out.writeShort(getReadDataLength() + 3);
-        out.writeByte(unitId);
-        out.writeByte(functionCode);
-        writePduData(out);
-    }
-
-    protected abstract void writePduData(ByteBuf out);
-
-    protected abstract int getReadDataLength();
 }

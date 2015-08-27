@@ -37,8 +37,13 @@ public class MissMatchResponse extends ModbusResponse {
     }
 
     @Override
-    public void encode(ByteBuf out) {
-        throw new UnsupportedOperationException("It is not necessary to encode MissMatchResponse.");
+    public void writePduData(ByteBuf out) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getPduDataLength() {
+        throw new UnsupportedOperationException();
     }
 
 }

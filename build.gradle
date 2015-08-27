@@ -44,6 +44,7 @@ dependencies {
   compile 'io.netty:netty-all:4.0.30.Final'
   compile 'net.sf.trove4j:trove4j:3.0.3'
   testCompile 'junit:junit:4.12'
+  testCompile 'org.mockito:mockito-all:1.+'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
