@@ -62,14 +62,14 @@ public abstract class ModbusResponse {
     public void encode(ByteBuf out) {
         out.writeShort(transectionId);
         out.writeShort(0);
-        out.writeShort(getPduDataLength() + 3);
+        out.writeShort(getPduCoreLength() + 2);
         out.writeByte(unitId);
         out.writeByte(functionCode);
-        writePduData(out);
+        writePduCore(out);
     }
 
-    public abstract void writePduData(ByteBuf out);
+    public abstract void writePduCore(ByteBuf out);
 
-    public abstract int getPduDataLength();
+    public abstract int getPduCoreLength();
 
 }

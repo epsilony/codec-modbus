@@ -37,12 +37,12 @@ public class MissMatchResponse extends ModbusResponse {
     }
 
     @Override
-    public void writePduData(ByteBuf out) {
+    public void writePduCore(ByteBuf out) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int getPduDataLength() {
+    public int getPduCoreLength() {
         throw new UnsupportedOperationException();
     }
 

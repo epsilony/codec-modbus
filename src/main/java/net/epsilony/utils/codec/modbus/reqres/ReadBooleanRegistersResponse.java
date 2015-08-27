@@ -56,7 +56,8 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    public void writePduData(ByteBuf out) {
+    public void writePduCore(ByteBuf out) {
+        out.writeByte(getPduCoreLength() - 1);
         int mask = 1;
         int dataByte = 0;
         for (int i = 0; i < quantity; i++) {
@@ -65,9 +66,9 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
             }
             mask <<= 1;
             if (mask == 0x100) {
+                out.writeByte(dataByte);
                 mask = 1;
                 dataByte = 0;
-                out.writeByte(dataByte);
             }
         }
         if (mask != 1) {
@@ -77,8 +78,8 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     }
 
     @Override
-    public int getPduDataLength() {
-        return 3 + (7 + quantity) / 8;
+    public int getPduCoreLength() {
+        return 1 + (7 + quantity) / 8;
     }
 
 }
