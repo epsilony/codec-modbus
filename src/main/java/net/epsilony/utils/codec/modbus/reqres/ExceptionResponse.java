@@ -33,6 +33,15 @@ import io.netty.buffer.ByteBuf;
 public class ExceptionResponse extends ModbusResponse {
     private int exceptionCode;
 
+    public ExceptionResponse(int transectionId, int unitId, int functionCode, int exceptionCode) {
+        super(transectionId, unitId, functionCode);
+        this.exceptionCode = exceptionCode;
+    }
+
+    public ExceptionResponse() {
+
+    }
+
     public int getExceptionCode() {
         return exceptionCode;
     }
@@ -49,6 +58,28 @@ public class ExceptionResponse extends ModbusResponse {
     @Override
     public int getPduCoreLength() {
         return 1;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + exceptionCode;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExceptionResponse other = (ExceptionResponse) obj;
+        if (exceptionCode != other.exceptionCode)
+            return false;
+        return true;
     }
 
 }

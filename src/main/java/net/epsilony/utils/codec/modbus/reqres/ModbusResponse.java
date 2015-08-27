@@ -35,6 +35,15 @@ public abstract class ModbusResponse {
     protected int unitId;
     protected int functionCode;
 
+    public ModbusResponse(int transectionId, int unitId, int functionCode) {
+        this.transectionId = transectionId;
+        this.unitId = unitId;
+        this.functionCode = functionCode;
+    }
+
+    public ModbusResponse() {
+    }
+
     public int getTransectionId() {
         return transectionId;
     }
@@ -71,5 +80,33 @@ public abstract class ModbusResponse {
     public abstract void writePduCore(ByteBuf out);
 
     public abstract int getPduCoreLength();
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + functionCode;
+        result = prime * result + transectionId;
+        result = prime * result + unitId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ModbusResponse other = (ModbusResponse) obj;
+        if (functionCode != other.functionCode)
+            return false;
+        if (transectionId != other.transectionId)
+            return false;
+        if (unitId != other.unitId)
+            return false;
+        return true;
+    }
 
 }

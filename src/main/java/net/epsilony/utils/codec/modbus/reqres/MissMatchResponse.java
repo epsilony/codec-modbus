@@ -32,9 +32,17 @@ import io.netty.buffer.ByteBuf;
  */
 public class MissMatchResponse extends ModbusResponse {
 
+    public MissMatchResponse() {
+    };
+
     public MissMatchResponse(int transectionId) {
         setTransectionId(transectionId);
     }
+
+    // public MissMatchResponse(int transectionId, int unitId, int functionCode)
+    // {
+    // super(transectionId, unitId, functionCode);
+    // }
 
     @Override
     public void writePduCore(ByteBuf out) {

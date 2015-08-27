@@ -34,6 +34,19 @@ import io.netty.buffer.ByteBuf;
 public class ReadWordRegistersResponse extends ReadRegistersResponse {
     private TShortArrayList values;
 
+    public ReadWordRegistersResponse() {
+    }
+
+    public ReadWordRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress,
+            int[] values) {
+        super(transectionId, unitId, functionCode, startingAddress);
+        this.quantity = values.length;
+        this.values = new TShortArrayList(values.length);
+        for (int v : values) {
+            this.values.add((short) v);
+        }
+    }
+
     @Override
     public void setQuantityAndAllocate(int quantity) {
         if (null == values) {
@@ -65,6 +78,31 @@ public class ReadWordRegistersResponse extends ReadRegistersResponse {
     @Override
     public int getPduCoreLength() {
         return 1 + 2 * quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((values == null) ? 0 : values.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReadWordRegistersResponse other = (ReadWordRegistersResponse) obj;
+        if (values == null) {
+            if (other.values != null)
+                return false;
+        } else if (!values.equals(other.values))
+            return false;
+        return true;
     }
 
 }

@@ -35,6 +35,19 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
 
     private TByteArrayList values;
 
+    public ReadBooleanRegistersResponse() {
+    }
+
+    public ReadBooleanRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress,
+            boolean[] values) {
+        super(transectionId, unitId, functionCode, startingAddress);
+        this.values = new TByteArrayList(values.length);
+        quantity = values.length;
+        for (boolean v : values) {
+            this.values.add((byte) (v ? 1 : 0));
+        }
+    }
+
     @Override
     public void setQuantityAndAllocate(int quantity) {
         this.quantity = quantity;
@@ -80,6 +93,31 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
     @Override
     public int getPduCoreLength() {
         return 1 + (7 + quantity) / 8;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((values == null) ? 0 : values.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReadBooleanRegistersResponse other = (ReadBooleanRegistersResponse) obj;
+        if (values == null) {
+            if (other.values != null)
+                return false;
+        } else if (!values.equals(other.values))
+            return false;
+        return true;
     }
 
 }

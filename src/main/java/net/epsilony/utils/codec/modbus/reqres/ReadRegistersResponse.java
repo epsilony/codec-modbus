@@ -35,6 +35,21 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
     protected int startingAddress;
     protected int quantity;
 
+    public ReadRegistersResponse() {
+
+    }
+
+    public ReadRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress, int quantity) {
+        super(transectionId, unitId, functionCode);
+        this.startingAddress = startingAddress;
+        setQuantityAndAllocate(quantity);
+    }
+
+    public ReadRegistersResponse(int transectionId, int unitId, int functionCode, int startingAddress) {
+        super(transectionId, unitId, functionCode);
+        this.startingAddress = startingAddress;
+    }
+
     public int getStartingAddress() {
         return startingAddress;
     }
@@ -62,6 +77,31 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
         default:
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + quantity;
+        result = prime * result + startingAddress;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReadRegistersResponse other = (ReadRegistersResponse) obj;
+        if (quantity != other.quantity)
+            return false;
+        if (startingAddress != other.startingAddress)
+            return false;
+        return true;
     }
 
 }
