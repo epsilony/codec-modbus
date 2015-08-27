@@ -34,6 +34,7 @@ public class ReadWordRegistersFunctionTest {
         }
 
         public void assertResponse(ReadWordRegistersResponse response) {
+            assertEquals(startingAddress, response.getStartingAddress());
             assertEquals(values.length, response.getQuantity());
             for (int i = 0; i < values.length; i++) {
                 assertEquals(values[i], response.getValue(i));

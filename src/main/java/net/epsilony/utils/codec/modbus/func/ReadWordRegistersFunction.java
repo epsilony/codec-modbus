@@ -51,6 +51,8 @@ public class ReadWordRegistersFunction extends ReadRegistersFunction {
 
         ReadWordRegistersResponse readWordRegistersResponse = (ReadWordRegistersResponse) response;
 
+        readWordRegistersResponse.setStartingAddress(startingAddress);
+
         int dataContentBytes = data.readUnsignedByte();
         if (dataContentBytes != getResponseDataLength() - 1) {
             throw new DecoderException();

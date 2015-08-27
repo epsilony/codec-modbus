@@ -66,6 +66,7 @@ public class ReadBooleanRegistersFunction extends ReadRegistersFunction {
         }
 
         ReadBooleanRegistersResponse readBooleanRegistersResponse = (ReadBooleanRegistersResponse) response;
+        readBooleanRegistersResponse.setStartingAddress(startingAddress);
 
         int dataContentBytes = data.readUnsignedByte();
         if (dataContentBytes != getResponseDataLength() - 1) {
