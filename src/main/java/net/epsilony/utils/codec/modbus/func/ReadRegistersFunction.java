@@ -123,4 +123,32 @@ public abstract class ReadRegistersFunction implements ModbusFunction {
         return 4;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + quantity;
+        result = prime * result + ((registerType == null) ? 0 : registerType.hashCode());
+        result = prime * result + startingAddress;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReadRegistersFunction other = (ReadRegistersFunction) obj;
+        if (quantity != other.quantity)
+            return false;
+        if (registerType != other.registerType)
+            return false;
+        if (startingAddress != other.startingAddress)
+            return false;
+        return true;
+    }
+
 }

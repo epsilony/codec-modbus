@@ -60,14 +60,43 @@ public class ModbusRequest {
     }
 
     public ModbusRequest(int transectionId, int unitId, ModbusFunction function) {
-        super();
         this.transectionId = transectionId;
         this.unitId = unitId;
         this.function = function;
     }
 
     public ModbusRequest() {
-        super();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((function == null) ? 0 : function.hashCode());
+        result = prime * result + transectionId;
+        result = prime * result + unitId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ModbusRequest other = (ModbusRequest) obj;
+        if (function == null) {
+            if (other.function != null)
+                return false;
+        } else if (!function.equals(other.function))
+            return false;
+        if (transectionId != other.transectionId)
+            return false;
+        if (unitId != other.unitId)
+            return false;
+        return true;
     }
 
 }
