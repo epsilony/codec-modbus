@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.handler;
 
 import java.util.List;
 
@@ -30,6 +30,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
+import net.epsilony.utils.codec.modbus.ModbusRegisterType;
+import net.epsilony.utils.codec.modbus.UnsupportedFunctionCodeException;
+import net.epsilony.utils.codec.modbus.Utils;
+import net.epsilony.utils.codec.modbus.func.ModbusFunction;
+import net.epsilony.utils.codec.modbus.func.ReadBooleanRegisterFunction;
+import net.epsilony.utils.codec.modbus.func.ReadWordRegistersFunction;
+import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>

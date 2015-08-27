@@ -28,6 +28,9 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 import io.netty.channel.CombinedChannelDuplexHandler;
+import net.epsilony.utils.codec.modbus.handler.ModbusMasterRequestEncoder;
+import net.epsilony.utils.codec.modbus.handler.ModbusMasterResponseDecoder;
+import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>

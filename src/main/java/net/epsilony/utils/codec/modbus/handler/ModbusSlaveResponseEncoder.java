@@ -22,28 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
+import net.epsilony.utils.codec.modbus.Utils;
+import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ExceptionResponse extends ModbusResponse {
-    private int exceptionCode;
+public class ModbusSlaveResponseEncoder extends MessageToByteEncoder<ModbusResponse> {
 
-    public int getExceptionCode() {
-        return exceptionCode;
+    boolean withCheckSum;
+
+    public boolean isWithCheckSum() {
+        return withCheckSum;
     }
 
-    public void setExceptionCode(int exceptionCode) {
-        this.exceptionCode = exceptionCode;
+    public void setWithCheckSum(boolean withCheckSum) {
+        this.withCheckSum = withCheckSum;
     }
 
     @Override
-    public void encode(ByteBuf out) {
-        out.writeByte(exceptionCode);
+    protected void encode(ChannelHandlerContext ctx, ModbusResponse msg, ByteBuf out) throws Exception {
+        int from = out.writerIndex();
+        msg.encode(out);
+        if (withCheckSum) {
+            out.writeShort(Utils.crc(out, from, out.writerIndex() - from));
+        }
     }
 
 }

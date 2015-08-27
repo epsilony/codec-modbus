@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.reqres;
 
 import io.netty.buffer.ByteBuf;
 
@@ -30,35 +30,20 @@ import io.netty.buffer.ByteBuf;
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public abstract class ModbusResponse {
-    protected int transectionId;
-    protected int unitId;
-    protected int functionCode;
+public class ExceptionResponse extends ModbusResponse {
+    private int exceptionCode;
 
-    public int getTransectionId() {
-        return transectionId;
+    public int getExceptionCode() {
+        return exceptionCode;
     }
 
-    public void setTransectionId(int transectionId) {
-        this.transectionId = transectionId;
+    public void setExceptionCode(int exceptionCode) {
+        this.exceptionCode = exceptionCode;
     }
 
-    public int getUnitId() {
-        return unitId;
+    @Override
+    public void encode(ByteBuf out) {
+        out.writeByte(exceptionCode);
     }
-
-    public void setUnitId(int unitId) {
-        this.unitId = unitId;
-    }
-
-    public int getFunctionCode() {
-        return functionCode;
-    }
-
-    public void setFunctionCode(int functionCode) {
-        this.functionCode = functionCode;
-    }
-
-    public abstract void encode(ByteBuf out);
 
 }

@@ -22,35 +22,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.reqres;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ModbusSlaveResponseEncoder extends MessageToByteEncoder<ModbusResponse> {
+public abstract class ModbusResponse {
+    protected int transectionId;
+    protected int unitId;
+    protected int functionCode;
 
-    boolean withCheckSum;
-
-    public boolean isWithCheckSum() {
-        return withCheckSum;
+    public int getTransectionId() {
+        return transectionId;
     }
 
-    public void setWithCheckSum(boolean withCheckSum) {
-        this.withCheckSum = withCheckSum;
+    public void setTransectionId(int transectionId) {
+        this.transectionId = transectionId;
     }
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, ModbusResponse msg, ByteBuf out) throws Exception {
-        int from = out.writerIndex();
-        msg.encode(out);
-        if (withCheckSum) {
-            out.writeShort(Utils.crc(out, from, out.writerIndex() - from));
-        }
+    public int getUnitId() {
+        return unitId;
     }
+
+    public void setUnitId(int unitId) {
+        this.unitId = unitId;
+    }
+
+    public int getFunctionCode() {
+        return functionCode;
+    }
+
+    public void setFunctionCode(int functionCode) {
+        this.functionCode = functionCode;
+    }
+
+    public abstract void encode(ByteBuf out);
 
 }

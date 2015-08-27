@@ -22,10 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.func;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
+import net.epsilony.utils.codec.modbus.ModbusRegisterType;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>

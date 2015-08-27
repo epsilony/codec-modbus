@@ -22,44 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.func;
 
 import io.netty.buffer.ByteBuf;
+import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public abstract class ReadRegistersResponse extends ModbusResponse {
+public interface ModbusFunction {
+    String getName();
 
-    protected int startingAddress;
-    protected int quantity;
+    int getCode();
 
-    public int getStartingAddress() {
-        return startingAddress;
-    }
+    void decodeRequestData(ByteBuf data);
 
-    public void setStartingAddress(int startingAddress) {
-        this.startingAddress = startingAddress;
-    }
+    void decodeResponseData(ByteBuf data, ModbusResponse response);
 
-    public int getQuantity() {
-        return quantity;
-    }
+    void encodeRequestData(ByteBuf data);
 
-    public abstract void setQuantityAndAllocate(int quantity);
+    int getRequestDataLength();
 
-    @Override
-    public void encode(ByteBuf out) {
-        out.writeShort(transectionId);
-        out.writeShort(0);
-        out.writeShort(getReadDataLength() + 3);
-        out.writeByte(unitId);
-        out.writeByte(functionCode);
-        writePduData(out);
-    }
-
-    protected abstract void writePduData(ByteBuf out);
-
-    protected abstract int getReadDataLength();
 }

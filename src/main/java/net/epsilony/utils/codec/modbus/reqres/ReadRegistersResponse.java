@@ -22,48 +22,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.reqres;
 
-import gnu.trove.list.array.TShortArrayList;
 import io.netty.buffer.ByteBuf;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ReadWordRegistersResponse extends ReadRegistersResponse {
-    private TShortArrayList values;
+public abstract class ReadRegistersResponse extends ModbusResponse {
+
+    protected int startingAddress;
+    protected int quantity;
+
+    public int getStartingAddress() {
+        return startingAddress;
+    }
+
+    public void setStartingAddress(int startingAddress) {
+        this.startingAddress = startingAddress;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public abstract void setQuantityAndAllocate(int quantity);
 
     @Override
-    public void setQuantityAndAllocate(int quantity) {
-        if (null == values) {
-            values = new TShortArrayList(quantity);
-        } else {
-            values.clear();
-            values.ensureCapacity(quantity);
-        }
-        values.fill(0, quantity, (short) 0);
+    public void encode(ByteBuf out) {
+        out.writeShort(transectionId);
+        out.writeShort(0);
+        out.writeShort(getReadDataLength() + 3);
+        out.writeByte(unitId);
+        out.writeByte(functionCode);
+        writePduData(out);
     }
 
-    public void setValue(int index, int value) {
-        values.set(index, (short) value);
-    }
+    protected abstract void writePduData(ByteBuf out);
 
-    public int getValue(int offset) {
-        return values.get(offset) & 0xFFFF;
-    }
-
-    @Override
-    protected void writePduData(ByteBuf out) {
-        out.writeByte(2 * quantity);
-        for (int i = 0; i < quantity; i++) {
-            out.writeShort(getValue(i));
-        }
-    }
-
-    @Override
-    protected int getReadDataLength() {
-        return 2 * quantity;
-    }
-
+    protected abstract int getReadDataLength();
 }

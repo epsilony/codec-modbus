@@ -22,13 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.handler;
 
 import java.util.function.Consumer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import net.epsilony.utils.codec.modbus.Utils;
+import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>

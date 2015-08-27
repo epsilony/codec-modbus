@@ -24,10 +24,28 @@
  */
 package net.epsilony.utils.codec.modbus;
 
+import io.netty.handler.codec.DecoderException;
+
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class UnsupportedFunctionCodeException extends RuntimeException {
+public class UnsupportedFunctionCodeException extends DecoderException {
+
+    public UnsupportedFunctionCodeException() {
+        super();
+    }
+
+    public UnsupportedFunctionCodeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UnsupportedFunctionCodeException(String message) {
+        super(message);
+    }
+
+    public UnsupportedFunctionCodeException(Throwable cause) {
+        super(cause);
+    }
 
 }

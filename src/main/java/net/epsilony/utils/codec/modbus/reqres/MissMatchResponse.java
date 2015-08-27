@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus;
+package net.epsilony.utils.codec.modbus.reqres;
 
 import io.netty.buffer.ByteBuf;
 
@@ -30,17 +30,15 @@ import io.netty.buffer.ByteBuf;
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public interface ModbusFunction {
-    String getName();
+public class MissMatchResponse extends ModbusResponse {
 
-    int getCode();
+    public MissMatchResponse(int transectionId) {
+        setTransectionId(transectionId);
+    }
 
-    void decodeRequestData(ByteBuf data);
-
-    void decodeResponseData(ByteBuf data, ModbusResponse response);
-
-    void encodeRequestData(ByteBuf data);
-
-    int getRequestDataLength();
+    @Override
+    public void encode(ByteBuf out) {
+        throw new UnsupportedOperationException("It is not necessary to encode MissMatchResponse.");
+    }
 
 }

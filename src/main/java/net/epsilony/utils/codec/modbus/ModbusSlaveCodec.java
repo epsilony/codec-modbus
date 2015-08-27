@@ -25,6 +25,8 @@
 package net.epsilony.utils.codec.modbus;
 
 import io.netty.channel.CombinedChannelDuplexHandler;
+import net.epsilony.utils.codec.modbus.handler.ModbusSlaveRequestDecoder;
+import net.epsilony.utils.codec.modbus.handler.ModbusSlaveResponseEncoder;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
