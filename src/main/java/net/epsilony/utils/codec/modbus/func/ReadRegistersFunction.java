@@ -80,7 +80,7 @@ public abstract class ReadRegistersFunction implements ModbusFunction {
             return "read holding registers";
         case INPUT:
             return "read input registers";
-        case INPUT_DISCRETE:
+        case DISCRETE_INPUT:
             return "read input discretes registers";
         default:
             throw new IllegalStateException();
@@ -96,7 +96,7 @@ public abstract class ReadRegistersFunction implements ModbusFunction {
             return 0x03;
         case INPUT:
             return 0x04;
-        case INPUT_DISCRETE:
+        case DISCRETE_INPUT:
             return 0x02;
         default:
             throw new IllegalStateException();

@@ -80,7 +80,7 @@ public abstract class ReadRegistersResponse extends ModbusResponse {
             return 0x03;
         case INPUT:
             return 0x04;
-        case INPUT_DISCRETE:
+        case DISCRETE_INPUT:
             return 0x02;
         default:
             throw new IllegalStateException();

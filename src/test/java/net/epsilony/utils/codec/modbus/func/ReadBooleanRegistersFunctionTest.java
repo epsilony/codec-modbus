@@ -53,7 +53,7 @@ public class ReadBooleanRegistersFunctionTest {
     @Test
     public void testDecodeResponseData() {
         SampleData[] datas = new SampleData[] {
-                new SampleData(ModbusRegisterType.INPUT_DISCRETE, 11, new boolean[] { true }, new int[] { 0x01, 0x01 }),
+                new SampleData(ModbusRegisterType.DISCRETE_INPUT, 11, new boolean[] { true }, new int[] { 0x01, 0x01 }),
                 new SampleData(ModbusRegisterType.COIL, 13,
                         new boolean[] { false, true, false, true, false, false, false, true },
                         new int[] { 0x01, 0x8A }),

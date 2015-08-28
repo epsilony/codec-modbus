@@ -118,7 +118,7 @@ public class ModbusMasterResponseDecoder extends ByteToMessageDecoder {
                 break;
             case 0x02: {
                 ReadBooleanRegistersResponse bResponse = new ReadBooleanRegistersResponse();
-                bResponse.setRegisterType(ModbusRegisterType.INPUT_DISCRETE);
+                bResponse.setRegisterType(ModbusRegisterType.DISCRETE_INPUT);
                 response = bResponse;
             }
                 break;

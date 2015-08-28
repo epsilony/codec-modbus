@@ -29,5 +29,5 @@ package net.epsilony.utils.codec.modbus;
  *
  */
 public enum ModbusRegisterType {
-INPUT_DISCRETE, COIL, INPUT, HOLDING
+COIL, DISCRETE_INPUT, HOLDING, INPUT
 }

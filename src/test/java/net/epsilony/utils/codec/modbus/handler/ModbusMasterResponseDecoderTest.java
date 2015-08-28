@@ -195,12 +195,12 @@ public class ModbusMasterResponseDecoderTest {
                                 0xff,
                                 0x03 }),
                 new TestData(
-                        new ModbusRequest(0xAB04, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB04, 0xFB, ModbusRegisterType.INPUT_DISCRETE, 0xFEDC,
+                        new ModbusRequest(0xAB04, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
+                        new ReadBooleanRegistersResponse(0xAB04, 0xFB, ModbusRegisterType.DISCRETE_INPUT, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x04, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x02, 0x01, 0x05 }),
                 new TestData(
-                        new ModbusRequest(0xAB05, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
+                        new ModbusRequest(0xAB05, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
                         new ExceptionResponse(0xAB05, 0xFB, 0x82, 0x01),
                         new int[] { 0xAB, 0x05, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }),
                 new TestData(new ModbusRequest(0xAB03, 0xFB, MF.readRegisters(ModbusRegisterType.COIL, 0xFEDC, 3)),
@@ -208,7 +208,7 @@ public class ModbusMasterResponseDecoderTest {
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x03, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x01, 0x01, 0x05 }),
                 new TestData(
-                        new ModbusRequest(0xAB06, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
+                        new ModbusRequest(0xAB06, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
                         new MissMatchResponse(0xAB06),
                         new int[] { 0xAB, 0x06, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }, false),
                 new TestData(new ModbusRequest(0xAB07, 0xFB, MF.readRegisters(ModbusRegisterType.COIL, 0xFEDC, 3)),
@@ -216,16 +216,16 @@ public class ModbusMasterResponseDecoderTest {
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x07, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x01, 0x01, 0x05 }),
                 new TestData(
-                        new ModbusRequest(0xAB08, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
-                        new ReadBooleanRegistersResponse(0xAB08, 0xFB, ModbusRegisterType.INPUT_DISCRETE, 0xFEDC,
+                        new ModbusRequest(0xAB08, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
+                        new ReadBooleanRegistersResponse(0xAB08, 0xFB, ModbusRegisterType.DISCRETE_INPUT, 0xFEDC,
                                 new boolean[] { true, false, true }),
                         new int[] { 0xAB, 0x08, 0x00, 0x00, 0x00, 0x04, 0xFB, 0x02, 0x01, 0x05 }),
                 new TestData(
-                        new ModbusRequest(0xAB09, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
+                        new ModbusRequest(0xAB09, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
                         new MissMatchResponse(0xAB09),
                         new int[] { 0xAB, 0x09, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }, false),
                 new TestData(
-                        new ModbusRequest(0xAB0a, 0xFB, MF.readRegisters(ModbusRegisterType.INPUT_DISCRETE, 0xFEDC, 3)),
+                        new ModbusRequest(0xAB0a, 0xFB, MF.readRegisters(ModbusRegisterType.DISCRETE_INPUT, 0xFEDC, 3)),
                         new ExceptionResponse(0xAB0a, 0xFB, 0x82, 0x01),
                         new int[] { 0xAB, 0x0a, 0x00, 0x00, 0x00, 0x03, 0xFB, 0x82, 0x01 }), };
     }

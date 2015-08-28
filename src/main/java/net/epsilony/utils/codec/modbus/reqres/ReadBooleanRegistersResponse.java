@@ -123,7 +123,7 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
 
     @Override
     protected void checkRegisterType(ModbusRegisterType registerType) {
-        if (registerType != ModbusRegisterType.COIL && registerType != ModbusRegisterType.INPUT_DISCRETE) {
+        if (registerType != ModbusRegisterType.COIL && registerType != ModbusRegisterType.DISCRETE_INPUT) {
             throw new IllegalArgumentException();
         }
 

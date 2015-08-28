@@ -79,7 +79,7 @@ public class ModbusSlaveRequestDecoder extends ByteToMessageDecoder {
             function = new ReadBooleanRegistersFunction(ModbusRegisterType.COIL);
             break;
         case 0x02:
-            function = new ReadBooleanRegistersFunction(ModbusRegisterType.INPUT_DISCRETE);
+            function = new ReadBooleanRegistersFunction(ModbusRegisterType.DISCRETE_INPUT);
             break;
         case 0x03:
             function = new ReadWordRegistersFunction(ModbusRegisterType.HOLDING);

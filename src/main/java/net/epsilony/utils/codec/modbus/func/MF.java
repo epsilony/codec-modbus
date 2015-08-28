@@ -36,7 +36,7 @@ public class MF {
         ReadRegistersFunction function;
         switch (registerType) {
         case COIL:
-        case INPUT_DISCRETE:
+        case DISCRETE_INPUT:
             function = new ReadBooleanRegistersFunction();
             break;
         case HOLDING:

@@ -46,7 +46,7 @@ public class ReadBooleanRegistersFunction extends ReadRegistersFunction {
 
     @Override
     protected void checkRegisterType(ModbusRegisterType registerType) {
-        if (registerType != ModbusRegisterType.COIL && registerType != ModbusRegisterType.INPUT_DISCRETE) {
+        if (registerType != ModbusRegisterType.COIL && registerType != ModbusRegisterType.DISCRETE_INPUT) {
             throw new IllegalArgumentException("register type should be COIL or INPUT_DISCRETE not " + registerType);
         }
     }
