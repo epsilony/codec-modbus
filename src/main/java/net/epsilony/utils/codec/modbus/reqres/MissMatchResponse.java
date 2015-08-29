@@ -54,4 +54,9 @@ public class MissMatchResponse extends ModbusResponse {
         return 0x80;
     }
 
+    @Override
+    public String toString() {
+        return "MissMatchResponse [transectionId=" + transectionId + ", unitId=" + unitId + "]";
+    }
+
 }

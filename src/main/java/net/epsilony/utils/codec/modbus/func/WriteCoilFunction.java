@@ -119,4 +119,9 @@ public class WriteCoilFunction implements ModbusFunction {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "WriteCoil [" + address + ", " + value + "]";
+    }
+
 }

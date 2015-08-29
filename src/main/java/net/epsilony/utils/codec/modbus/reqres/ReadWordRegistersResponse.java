@@ -114,4 +114,11 @@ public class ReadWordRegistersResponse extends ReadRegistersResponse {
 
     }
 
+    @Override
+    public String toString() {
+        return "ReadWordRegistersResponse [transectionId=" + transectionId + ", unitId=" + unitId + ", registerType="
+                + registerType + ", startingAddress=" + startingAddress + ", quantity=" + quantity + ", values="
+                + values + "]";
+    }
+
 }

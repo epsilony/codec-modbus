@@ -120,4 +120,9 @@ public class WriteHoldingFunction implements ModbusFunction {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "WriteHolding [" + address + ", " + value + "]";
+    }
+
 }

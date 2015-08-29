@@ -151,4 +151,9 @@ public abstract class ReadRegistersFunction implements ModbusFunction {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ReadRegisters [" + registerType + ", " + startingAddress + ", " + quantity + "]";
+    }
+
 }

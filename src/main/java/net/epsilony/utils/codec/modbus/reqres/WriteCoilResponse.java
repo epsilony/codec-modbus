@@ -102,4 +102,10 @@ public class WriteCoilResponse extends ModbusResponse {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "WriteCoilResponse [transectionId=" + transectionId + ", unitId=" + unitId + ", address=" + address
+                + ", value=" + value + "]";
+    }
+
 }

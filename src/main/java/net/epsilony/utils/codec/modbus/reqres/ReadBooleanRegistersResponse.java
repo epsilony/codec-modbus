@@ -129,4 +129,11 @@ public class ReadBooleanRegistersResponse extends ReadRegistersResponse {
 
     }
 
+    @Override
+    public String toString() {
+        return "ReadBooleanRegistersResponse [transectionId=" + transectionId + ", unitId=" + unitId + ", registerType="
+                + registerType + ", startingAddress=" + startingAddress + ", quantity=" + quantity + ", values="
+                + values + "]";
+    }
+
 }

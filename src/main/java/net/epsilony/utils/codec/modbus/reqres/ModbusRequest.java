@@ -99,4 +99,9 @@ public class ModbusRequest {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ModbusRequest [transectionId=" + transectionId + ", unitId=" + unitId + ", function=" + function + "]";
+    }
+
 }

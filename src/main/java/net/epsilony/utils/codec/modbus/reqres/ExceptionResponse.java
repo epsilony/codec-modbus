@@ -96,4 +96,9 @@ public class ExceptionResponse extends ModbusResponse {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ExceptionResponse [functionCode=" + functionCode + ", exceptionCode=" + exceptionCode + "]";
+    }
+
 }
