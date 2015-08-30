@@ -24,47 +24,27 @@
  */
 package net.epsilony.utils.codec.modbus.handler;
 
-import io.netty.buffer.ByteBuf;
+import com.google.common.eventbus.EventBus;
+
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import net.epsilony.utils.codec.modbus.Utils;
-import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ModbusMasterRequestEncoder extends MessageToByteEncoder<ModbusRequest> {
+public class ResponseEventBus extends SimpleChannelInboundHandler<ModbusResponse> {
 
-    private boolean withCheckSum = false;
+    private EventBus eventBus = new EventBus();
 
-    public ModbusMasterRequestEncoder() {
-    }
-
-    public boolean isWithCheckSum() {
-        return withCheckSum;
-    }
-
-    public void setWithCheckSum(boolean withCheckSum) {
-        this.withCheckSum = withCheckSum;
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ModbusRequest msg, ByteBuf out) throws Exception {
-        int from = out.writerIndex();
-        out.writeShort(msg.getTransectionId());
-        out.writeShort(0);
-        out.writeShort(2 + msg.getFunction().getRequestDataLength());
-        out.writeByte(msg.getUnitId());
-        out.writeByte(msg.getFunction().getCode());
-        msg.getFunction().encodeRequestData(out);
-        if (withCheckSum) {
-            out.writeShort(checkSum(out, from));
-        }
-    }
-
-    private int checkSum(ByteBuf out, int from) {
-        return Utils.crc(out, from, out.writerIndex() - from);
+    protected void channelRead0(ChannelHandlerContext ctx, ModbusResponse msg) throws Exception {
+        eventBus.post(msg);
     }
 
 }

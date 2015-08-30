@@ -24,35 +24,18 @@
  */
 package net.epsilony.utils.codec.modbus;
 
-import java.util.function.IntFunction;
-
-import io.netty.channel.CombinedChannelDuplexHandler;
-import net.epsilony.utils.codec.modbus.handler.ModbusMasterRequestEncoder;
-import net.epsilony.utils.codec.modbus.handler.ModbusMasterResponseDecoder;
-import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
-
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ModbusMasterCodec
-        extends CombinedChannelDuplexHandler<ModbusMasterResponseDecoder, ModbusMasterRequestEncoder> {
+public interface TransectionIdDispatcher {
 
-    public ModbusMasterCodec() {
-        super(new ModbusMasterResponseDecoder(), new ModbusMasterRequestEncoder());
-    }
+    int borrow();
 
-    public ModbusMasterCodec(IntFunction<ModbusRequest> transectionRequestRetriever) {
-        super(new ModbusMasterResponseDecoder(transectionRequestRetriever), new ModbusMasterRequestEncoder());
-    }
+    void repay(int transectionId);
 
-    void setWithCheckSum(boolean value) {
-        inboundHandler().setWithCheckSum(value);
-        outboundHandler().setWithCheckSum(value);
-    }
+    int countBorrowed();
 
-    boolean isWithCheckSum() {
-        return inboundHandler().isWithCheckSum();
-    }
+    void reset();
 
 }

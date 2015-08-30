@@ -1,10 +1,6 @@
 package net.epsilony.utils.codec.modbus.handler;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -19,10 +15,7 @@ public class ModbusMasterRequestEncoderTest {
 
     @Test
     public void test() {
-        Map<Integer, ModbusRequest> records = new LinkedHashMap<>();
-        ModbusMasterRequestEncoder encoder = new ModbusMasterRequestEncoder(req -> {
-            records.put(req.getTransectionId(), req);
-        });
+        ModbusMasterRequestEncoder encoder = new ModbusMasterRequestEncoder();
         EmbeddedChannel channel = new EmbeddedChannel(encoder);
 
         ModbusRequest request = new ModbusRequest(0xAB00, 0x83, new ModbusFunction() {
@@ -85,10 +78,6 @@ public class ModbusMasterRequestEncoderTest {
             assertEquals(calcCrc, buf.readUnsignedShort());
         }
 
-        assertEquals(6, records.size());
-        for (int i = 0; i < 6; i++) {
-            assertTrue(records.containsKey(0xAB00 + i));
-        }
     }
 
 }

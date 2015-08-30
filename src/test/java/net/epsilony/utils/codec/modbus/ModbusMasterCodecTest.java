@@ -22,49 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.epsilony.utils.codec.modbus.handler;
+package net.epsilony.utils.codec.modbus;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import net.epsilony.utils.codec.modbus.Utils;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import org.junit.Test;
+
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.embedded.EmbeddedChannel;
+import net.epsilony.utils.codec.modbus.func.MF;
 import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
+import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
  *
  */
-public class ModbusMasterRequestEncoder extends MessageToByteEncoder<ModbusRequest> {
+public class ModbusMasterCodecTest {
 
-    private boolean withCheckSum = false;
+    @Test
+    public void test() throws InterruptedException, ExecutionException {
+        SimpModbusMasterChannelInitializer init = new SimpModbusMasterChannelInitializer();
+        EmbeddedChannel channel = new EmbeddedChannel(init);
+        ChannelPromise newPromise = channel.newPromise();
+        System.out.println(channel.isRegistered());
 
-    public ModbusMasterRequestEncoder() {
-    }
+        ModbusClientMaster master = new ModbusClientMaster() {
+            @Override
+            protected ChannelFuture genConnectFuture() {
+                this.initializer = init;
+                newPromise.setSuccess();
+                return newPromise;
+            }
+        };
 
-    public boolean isWithCheckSum() {
-        return withCheckSum;
-    }
-
-    public void setWithCheckSum(boolean withCheckSum) {
-        this.withCheckSum = withCheckSum;
-    }
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, ModbusRequest msg, ByteBuf out) throws Exception {
-        int from = out.writerIndex();
-        out.writeShort(msg.getTransectionId());
-        out.writeShort(0);
-        out.writeShort(2 + msg.getFunction().getRequestDataLength());
-        out.writeByte(msg.getUnitId());
-        out.writeByte(msg.getFunction().getCode());
-        msg.getFunction().encodeRequestData(out);
-        if (withCheckSum) {
-            out.writeShort(checkSum(out, from));
-        }
-    }
-
-    private int checkSum(ByteBuf out, int from) {
-        return Utils.crc(out, from, out.writerIndex() - from);
+        CompletableFuture<ModbusResponse> future = master
+                .request(new ModbusRequest(0, 0, MF.readRegisters(ModbusRegisterType.COIL, 0, 10)));
+        future.get();
     }
 
 }

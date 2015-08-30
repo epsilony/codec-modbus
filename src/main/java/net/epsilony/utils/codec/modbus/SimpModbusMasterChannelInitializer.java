@@ -26,11 +26,20 @@ package net.epsilony.utils.codec.modbus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import net.epsilony.utils.codec.modbus.handler.ResponseEventBus;
 import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
+import net.epsilony.utils.codec.modbus.reqres.ModbusResponse;
 
 /**
  * @author <a href="mailto:epsilony@epsilony.net">Man YUAN</a>
@@ -39,20 +48,82 @@ import net.epsilony.utils.codec.modbus.reqres.ModbusRequest;
 public class SimpModbusMasterChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     public static long DEFAULT_REQUEST_LIFETIME = 5000;
-    private Map<Integer, ModbusRequest> requestRecorder = new LinkedHashMap<>();
+    private Map<Integer, Entry> requestRecorder = new LinkedHashMap<>();
     private long requestLifeTime = DEFAULT_REQUEST_LIFETIME;
+    private ResponseEventBus responseEventBus;
+    private SocketChannel channel;
+
+    public static class Entry {
+        public final CompletableFuture<ModbusResponse> completableFuture;
+        public final ModbusRequest request;
+        public boolean trieved = false;
+
+        public Entry(CompletableFuture<ModbusResponse> completableFuture, ModbusRequest request) {
+            this.completableFuture = completableFuture;
+            this.request = request;
+        }
+    }
+
+    public void register(CompletableFuture<ModbusResponse> future, ModbusRequest request) {
+        int transectionId = request.getTransectionId();
+        if (requestRecorder.containsKey(transectionId)) {
+            throw new TransectionIdConflictingException();
+        }
+        requestRecorder.put(transectionId, new Entry(future, request));
+        if (requestLifeTime == 0) {
+            return;
+        }
+        channel.eventLoop().schedule(() -> {
+            Entry entry = requestRecorder.remove(transectionId);
+            if (null == entry) {
+                return;
+            }
+            entry.completableFuture.completeExceptionally(new TimeoutException(channel + " ," + request));
+        } , requestLifeTime, TimeUnit.MILLISECONDS);
+    }
+
+    @Subscribe
+    public void listen(ModbusResponse response) {
+        Entry entry = requestRecorder.remove(response.getTransectionId());
+        entry.completableFuture.complete(response);
+    }
+
+    public void clearExceptionally(Throwable ex) {
+        for (Map.Entry<Integer, Entry> me : requestRecorder.entrySet()) {
+            me.getValue().completableFuture.completeExceptionally(ex);
+        }
+        requestRecorder.clear();
+    }
+
+    public void removeExceptionally(int transectionId, Throwable ex) {
+        Entry entry = requestRecorder.remove(transectionId);
+        if (null == entry) {
+            return;
+        }
+        entry.completableFuture.completeExceptionally(ex);
+    }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addLast(new ModbusMasterCodec(requestRecorder::remove, (res) -> {
-            requestRecorder.put(res.getTransectionId(), res);
-            if (requestLifeTime <= 0) {
-                return;
+        channel = ch;
+        responseEventBus = new ResponseEventBus();
+        responseEventBus.getEventBus().register(this);
+        ch.pipeline().addLast(new ModbusMasterCodec(transectionId -> {
+            Entry entry = requestRecorder.get(transectionId);
+            if (null == entry || entry.trieved == true) {
+                return null;
             }
-            ch.eventLoop().schedule(() -> {
-                requestRecorder.remove(res.getTransectionId());
-            } , requestLifeTime, TimeUnit.MILLISECONDS);
-        }));
+            entry.trieved = true;
+            return entry.request;
+        }), responseEventBus, new ChannelInboundHandlerAdapter() {
+
+            @Override
+            public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+
+                super.channelInactive(ctx);
+            }
+
+        });
     }
 
     public long getRequestLifeTime() {
@@ -64,6 +135,10 @@ public class SimpModbusMasterChannelInitializer extends ChannelInitializer<Socke
             throw new IllegalArgumentException();
         }
         this.requestLifeTime = requestLifeTime;
+    }
+
+    public EventBus getResponseEventBus() {
+        return responseEventBus.getEventBus();
     }
 
 }
